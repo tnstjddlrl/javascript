@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body onload="startGame()">
+<script>
+
+var myGamePiece;
+var myGamePiece2;
+var leftwall, rightwall, topwall, nat;
+var ball;
+var score;
+var player1score =0, player2score=0;
+
+function startGame() {
+    nat = new component(5,130, "green",230,150);
+    topwall = new component(480,5,"green",0,0);
+    leftwall = new component(5,300, "green",0,0);
+    rightwall = new component(5,300, "green",475,0);
+    myGamePiece2 = new component(50, 50, "green", 400, 200);
+    myGamePiece = new component(50, 50, "red", 10, 200);
+    ball = new gravitycomponent(30, 30, "blue", 100, 50);
+    score = new textcomponent("30px", "Consolas", "black", 280, 40, "text");
+
+    myGameArea.start();
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 480;
+        this.canvas.height = 270;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.interval = setInterval(updateGameArea, 20);
+    },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+function component(width, height, color, x, y) {
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.x = x;
+    this.y = y;
+    this.update = function() {
+        ctx = myGameArea.context;
+        ctx.fillStyle = color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+    // this.newPos = function() {
+    //     this.x += this.speedX;
+    //     this.y += this.speedY;
+    // }
+}
+function gravitycomponent(width, height, color, x, y, type) {
+    this.type = type;
+    this.width = width;
+    this.height = height;
+    this.x = x;
+    this.y = y;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.gravity = 0.3;
+    this.gravitySpeed = 0;
+    this.update = function() {
+        ctx = myGameArea.context;
+        ctx.fillStyle = color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+    this.newPos = function() {
+        this.gravitySpeed += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY + this.gravitySpeed;
+        this.hitBottom();
+    }
+    this.hitBottom = function() {
+        var rockbottom = myGameArea.canvas.height - this.height;
+        if (this.y > rockbottom) {
+            this.y = rockbottom;
+            if(this.x <220){
+              player2score +=1;
+              score.text = player1score + " : " + player2score;
+              ball.x = 10;
+              ball.y = 50;
+              ball.speedX = 0;
+              ball.speedY = 0;
+              ball.gravitySpeed = 0;
+              myGamePiece.x = 10;
+              myGamePiece.y = 200;
+              myGamePiece2.x = 400;
+              myGamePiece2.y =200;
+            }
+            if(this.x >=220){
+              player1score +=1;
+              score.text = player1score + " : " + player2score;
+              ball.x=400;
+              ball.y=50;
+              ball.speedX = 0;
+              ball.speedY = 0;
+              ball.gravitySpeed = 0;
+              myGamePiece.x = 10;
+              myGamePiece.y = 200;
+              myGamePiece2.x = 400;
+              myGamePiece2.y =200;
+            }
+        }
+
+        this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
+}
+
+}
+function textcomponent(width, height, color, x, y, type) {
+    this.type = type;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.x = x;
+    this.y = y;
+    this.update = function() {
+        ctx = myGameArea.context;
+        if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+}
+
+function updateGameArea() {
+
+    myGameArea.clear();
+    nat.update();
+    leftwall.update();
+    rightwall.update();
+    topwall.update();
+    myGamePiece.update();
+    myGamePiece2.update();
+    score.update();
+    score.text = player1score + " : " + player2score;
+    ball.update();
+    ball.newPos();
+    if(ball.crashWith(myGamePiece)){
+      ball.speedX = myGamePiece.speedX*5;
+      ball.gravitySpeed = 0;
+      // ball.speedY = -16;
+      ball.speedY = myGamePiece.speedY*1.5;
+    }
+    if(ball.crashWith(myGamePiece2)){
+      ball.speedX = myGamePiece2.speedX*5;
+      ball.gravitySpeed = 0;
+
+      ball.speedY = myGamePiece2.speedY*1.5;
+    }
+    if(ball.crashWith(leftwall)){
+      ball.speedX = -(ball.speedX);
+    }
+    if(ball.crashWith(rightwall)){
+      ball.speedX = -(ball.speedX);
+    }
+    if(ball.crashWith(topwall)){
+      ball.speedX = ball.speedX/3;
+      ball.speedY = 0;
+    }
+    if(ball.crashWith(nat)){
+      ball.speedX = -(ball.speedX);
+    }
+
+}
+
+//=====================빨간색을 움직이기 위한공간
+function moveup() {
+    myGamePiece.y += myGamePiece.speedY;
+}
+
+function movedown() {
+
+    myGamePiece.y += myGamePiece.speedY;
+}
+
+function moveleft() {
+
+    myGamePiece.x += myGamePiece.speedX;
+}
+
+function moveright() {
+
+    myGamePiece.x += myGamePiece.speedX;
+}
+
+function clearXmove() {
+    myGamePiece.speedX = 0;
+    myGamePiece.x += myGamePiece.speedX;
+
+}
+function clearYmove() {
+    myGamePiece.speedY = 0;
+}
+
+
+$(function(){
+  var keypress = {};
+  setInterval(function(){
+    // p1
+    if(keypress['87']){
+       myGamePiece.speedY = -3;
+       myGamePiece.y += myGamePiece.speedY;
+     }// up - w
+    if(keypress['83']){
+      myGamePiece.speedY = +3;
+      myGamePiece.y += myGamePiece.speedY;
+    } // down - s
+    if(keypress['65']){
+      myGamePiece.speedX = -3;
+      myGamePiece.x += myGamePiece.speedX;
+    } // left - a
+    if(keypress['68']){
+      myGamePiece.speedX = +3;
+      myGamePiece.x += myGamePiece.speedX;
+    } // right - d
+    // p2
+    if(keypress['73']){
+      myGamePiece2.speedY = -3;
+      myGamePiece2.y += myGamePiece2.speedY;
+    }  // up - i
+    if(keypress['75']){
+      myGamePiece2.speedY = +3;
+      myGamePiece2.y += myGamePiece2.speedY;
+    }  // down - k
+    if(keypress['74']){
+      myGamePiece2.speedX = -3;
+      myGamePiece2.x += myGamePiece2.speedX;
+    }  // left - j
+    if(keypress['76']){
+      myGamePiece2.speedX = +3;
+      myGamePiece2.x += myGamePiece2.speedX;
+    }  // right - l
+  }, 10);
+
+  $(document).keydown(function(e){
+    keypress[e.which.toString()] = true;
+  });
+  $(document).keyup(function(e){
+    keypress[e.which.toString()] = false;
+  });
+});
+
+//=============================초록색을 움직이기위한 공간
+function moveup2() {
+    myGamePiece2.speedY = -3;
+}
+function movedown2() {
+    myGamePiece2.speedY = 3;
+}
+function moveleft2() {
+    myGamePiece2.speedX = -3;
+}
+function moveright2() {
+    myGamePiece2.speedX = 3;
+}
+function clearXmove2() {
+    myGamePiece2.speedX = 0;
+}
+function clearYmove2() {
+    myGamePiece2.speedY = 0;
+}
+// $(document).on('keypress', function(key) {
+//     if(key.keyCode == 56){
+//       moveup2();
+//   }
+//     $(document).on('keyup', function() {
+//       if(key.keyCode == 56){
+//         clearYmove2();
+//       }
+//     });
+// });
+// $(document).on('keypress', function(key) {
+//     if(key.keyCode == 52){
+//       moveleft2();
+//   }
+//     $(document).on('keyup', function() {
+//       if(key.keyCode == 52){
+//         clearXmove2();
+//       }
+//     });
+// });
+// $(document).on('keypress', function(key) {
+//     if(key.keyCode == 54){
+//       moveright2();
+//   }
+//     $(document).on('keyup', function() {
+//       if(key.keyCode == 54){
+//         clearXmove2();
+//       }
+//     });
+// });
+// $(document).on('keypress', function(key) {
+//     if(key.keyCode == 53){
+//       movedown2();
+//   }
+//     $(document).on('keyup', function() {
+//       if(key.keyCode == 53){
+//         clearYmove2();
+//       }
+//     });
+// });
+
+
+
+
+</script>
+<div style="text-align:center;width:480px;">
+
+</div>
+
+<p>왼쪽은 wasd로 오른쪽은 ikjl으로 움직입니다.</p>
+<p>공이 닿는 순간의 속력으로 공을 밀어냅니다.</p>
+<p>상대방 발밑에 공을 떨어트리면 점수를 획득합니다.</p>
+<p>tip)천장에 공이 닿으면 공의 속력이 줄어듭니다.</p>
+</body>
+</html>
