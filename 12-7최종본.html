@@ -75,9 +75,10 @@ function gravitycomponent(width, height, color, x, y, type) {
     this.gravity = 0.3;
     this.gravitySpeed = 0;
     this.update = function() {
-        ctx = myGameArea.context;
-        ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+      ctx = myGameArea.context;
+      ctx.beginPath();
+      ctx.arc(this.x+20,this.y+20,20,0,2 * Math.PI,0);
+      ctx.fill();
     }
     this.newPos = function() {
         this.gravitySpeed += this.gravity;
