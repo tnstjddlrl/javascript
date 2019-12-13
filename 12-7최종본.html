@@ -198,34 +198,7 @@ function updateGameArea() {
 
 }
 
-//=====================빨간색을 움직이기 위한공간
-function moveup() {
-    myGamePiece.y += myGamePiece.speedY;
-}
-
-function movedown() {
-
-    myGamePiece.y += myGamePiece.speedY;
-}
-
-function moveleft() {
-
-    myGamePiece.x += myGamePiece.speedX;
-}
-
-function moveright() {
-
-    myGamePiece.x += myGamePiece.speedX;
-}
-
-function clearXmove() {
-    myGamePiece.speedX = 0;
-    myGamePiece.x += myGamePiece.speedX;
-
-}
-function clearYmove() {
-    myGamePiece.speedY = 0;
-}
+//=====================플레이어를 움직이기 위한 코드들
 
 
 $(function(){
@@ -275,65 +248,7 @@ $(function(){
   });
 });
 
-//=============================초록색을 움직이기위한 공간
-function moveup2() {
-    myGamePiece2.speedY = -3;
-}
-function movedown2() {
-    myGamePiece2.speedY = 3;
-}
-function moveleft2() {
-    myGamePiece2.speedX = -3;
-}
-function moveright2() {
-    myGamePiece2.speedX = 3;
-}
-function clearXmove2() {
-    myGamePiece2.speedX = 0;
-}
-function clearYmove2() {
-    myGamePiece2.speedY = 0;
-}
-// $(document).on('keypress', function(key) {
-//     if(key.keyCode == 56){
-//       moveup2();
-//   }
-//     $(document).on('keyup', function() {
-//       if(key.keyCode == 56){
-//         clearYmove2();
-//       }
-//     });
-// });
-// $(document).on('keypress', function(key) {
-//     if(key.keyCode == 52){
-//       moveleft2();
-//   }
-//     $(document).on('keyup', function() {
-//       if(key.keyCode == 52){
-//         clearXmove2();
-//       }
-//     });
-// });
-// $(document).on('keypress', function(key) {
-//     if(key.keyCode == 54){
-//       moveright2();
-//   }
-//     $(document).on('keyup', function() {
-//       if(key.keyCode == 54){
-//         clearXmove2();
-//       }
-//     });
-// });
-// $(document).on('keypress', function(key) {
-//     if(key.keyCode == 53){
-//       movedown2();
-//   }
-//     $(document).on('keyup', function() {
-//       if(key.keyCode == 53){
-//         clearYmove2();
-//       }
-//     });
-// });
+
 
 
 
