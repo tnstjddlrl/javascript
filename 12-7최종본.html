@@ -21,7 +21,7 @@ var score;
 var player1score =0, player2score=0;
 
 function startGame() {
-    nat = new component(5,130, "green",230,150);
+    nat = new component(5,130, "green",240,150);
     topwall = new component(480,5,"green",0,0);
     leftwall = new component(5,300, "green",0,0);
     rightwall = new component(5,300, "green",475,0);
@@ -173,14 +173,13 @@ function updateGameArea() {
     if(ball.crashWith(myGamePiece)){
       ball.speedX = myGamePiece.speedX*5;
       ball.gravitySpeed = 0;
-      // ball.speedY = -16;
-      ball.speedY = myGamePiece.speedY*1.5;
+      ball.speedY = myGamePiece.speedY*2;
     }
     if(ball.crashWith(myGamePiece2)){
       ball.speedX = myGamePiece2.speedX*5;
       ball.gravitySpeed = 0;
 
-      ball.speedY = myGamePiece2.speedY*1.5;
+      ball.speedY = myGamePiece2.speedY*2;
     }
     if(ball.crashWith(leftwall)){
       ball.speedX = -(ball.speedX);
