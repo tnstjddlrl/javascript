@@ -132,6 +132,7 @@ function gravitycomponent(width, height, color, x, y, type) {
     this.update = function() {
       ctx = myGameArea.context;
       ctx.beginPath();
+      ctx.fillStyle = color;
       ctx.arc(this.x+20,this.y+20,20,0,2 * Math.PI,0);
       ctx.fill();
     }
@@ -243,15 +244,28 @@ function updateGameArea() {
     ball.update();
     ball.newPos();
     if(ball.crashWith(myGamePiece)){
+      if(myGamePiece.speedY == 0){
+          console.log('확인');
+      ball.speedY = -5;
+      ball.gravitySpeed = 0;
+      ball.speedX = myGamePiece.speedX*5;
+    }
+    if(myGamePiece.speedY != 0){
       ball.speedX = myGamePiece.speedX*5;
       ball.gravitySpeed = 0;
-      ball.speedY = myGamePiece.speedY/1.5;
+      ball.speedY = myGamePiece.speedY/1.5;}
     }
     if(ball.crashWith(myGamePiece2)){
+      if(myGamePiece2.speedY == 0){
+          console.log('확인');
+      ball.speedY = -5;
+      ball.gravitySpeed = 0;
+      ball.speedX = myGamePiece2.speedX*5;
+    }
+    if(myGamePiece2.speedY != 0){
       ball.speedX = myGamePiece2.speedX*5;
       ball.gravitySpeed = 0;
-
-      ball.speedY = myGamePiece2.speedY/1.5;
+      ball.speedY = myGamePiece2.speedY/1.5;}
     }
     if(ball.crashWith(leftwall)){
       ball.speedX = -(ball.speedX);
@@ -279,7 +293,8 @@ $(function(){
   setInterval(function(){
     // p1
     if(keypress['87']){
-       myGamePiece.speedY = -10;
+       myGamePiece.speedY = -9;
+
 
      }// jump - w
     if(keypress['83']){
@@ -288,17 +303,17 @@ $(function(){
     } // down - s
     if(keypress['65']){
       myGamePiece.speedX = -3;
-
+      myGamePiece.x += myGamePiece.speedX;
 
     } // left - a
     if(keypress['68']){
       myGamePiece.speedX = +3;
-
-
+      myGamePiece.x += myGamePiece.speedX;
     } // right - d
+
     // p2
     if(keypress['73']){
-      myGamePiece2.speedY = -10;
+      myGamePiece2.speedY = -9;
 
     }  // jump - i
     if(keypress['75']){
@@ -307,10 +322,12 @@ $(function(){
     }  // down - k
     if(keypress['74']){
       myGamePiece2.speedX = -3;
+      myGamePiece2.x += myGamePiece2.speedX;
 
     }  // left - j
     if(keypress['76']){
       myGamePiece2.speedX = +3;
+      myGamePiece2.x += myGamePiece2.speedX;
 
     }  // right - l
   }, 10);
