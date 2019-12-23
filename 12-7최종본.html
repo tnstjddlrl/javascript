@@ -12,7 +12,7 @@ canvas {
 </head>
 <body onload="startGame()">
 <script>
-//멀지 테스트
+
 var myGamePiece;
 var myGamePiece2;
 var leftwall, rightwall, topwall, nat;
@@ -21,6 +21,8 @@ var score;
 var player1score =0, player2score=0;
 
 function startGame() {
+
+
     nat = new component(5,130, "green",240,150);
     topwall = new component(480,5,"green",0,0);
     leftwall = new component(5,300, "green",0,0);
@@ -47,11 +49,47 @@ var myGameArea = {
     }
 }
 
+// function newjumpcompo(width, height, color, x, y) {
+//   this.width = width;
+//   this.height = height;
+//   this.speedX = 0;
+//   this.speedY = 0;
+//   this.gravity = 0.3;
+//   this.gravitySpeed = 0;
+//   this.x = x;
+//   this.y = y;
+//   this.update = function() {
+//       ctx = myGameArea.context;
+//       ctx.fillStyle = color;
+//       ctx.fillRect(this.x, this.y, this.width, this.height);
+//   }
+//   this.newPos = function() {
+//       this.gravitySpeed += this.gravity;
+//       this.x += this.speedX;
+//       this.y += this.speedY + this.gravitySpeed;
+//       this.hitBottom();
+//   }
+//
+//   this.hitBottom = function() {
+//       var rockbottom = myGameArea.canvas.height - this.height;
+//
+//       if (this.y > rockbottom) {
+//           this.y = rockbottom;
+//
+//           this.speedX = 0;
+//           this.speedY = 0;
+//           this.gravitySpeed = 0;
+//
+//       }
+//     }
+// }
 function component(width, height, color, x, y) {
     this.width = width;
     this.height = height;
     this.speedX = 0;
     this.speedY = 0;
+    this.gravity = 0.3;
+    this.gravitySpeed = 0;
     this.x = x;
     this.y = y;
     this.update = function() {
@@ -59,6 +97,26 @@ function component(width, height, color, x, y) {
         ctx.fillStyle = color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
+
+    this.newPos = function() {
+        this.x += this.speedX;
+        this.gravitySpeed += this.gravity;
+        this.y += this.speedY + this.gravitySpeed;
+        this.hitBottom();
+
+    }
+    this.hitBottom = function() {
+        var rockbottom = myGameArea.canvas.height - this.height;
+
+        if (this.y > rockbottom) {
+            this.y = rockbottom;
+
+            this.speedX = 0;
+            this.speedY = 0;
+            this.gravitySpeed = 0;
+
+        }
+      }
 
 }
 function gravitycomponent(width, height, color, x, y, type) {
@@ -87,7 +145,7 @@ function gravitycomponent(width, height, color, x, y, type) {
         var rockbottom = myGameArea.canvas.height - this.height;
         if (this.y > rockbottom) {
             this.y = rockbottom;
-            if(this.x <220){
+            if(this.x <240){
               player2score +=1;
               score.text = player1score + " : " + player2score;
               ball.x = 10;
@@ -97,10 +155,16 @@ function gravitycomponent(width, height, color, x, y, type) {
               ball.gravitySpeed = 0;
               myGamePiece.x = 10;
               myGamePiece.y = 200;
+              myGamePiece.speedX = 0;
+              myGamePiece.speedY = 0;
+              myGamePiece.gravitySpeed = 0;
               myGamePiece2.x = 400;
               myGamePiece2.y =200;
+              myGamePiece2.speedX = 0;
+              myGamePiece2.speedY = 0;
+              myGamePiece2.gravitySpeed = 0;
             }
-            if(this.x >=220){
+            if(this.x >=240){
               player1score +=1;
               score.text = player1score + " : " + player2score;
               ball.x=400;
@@ -110,8 +174,14 @@ function gravitycomponent(width, height, color, x, y, type) {
               ball.gravitySpeed = 0;
               myGamePiece.x = 10;
               myGamePiece.y = 200;
+              myGamePiece.speedX = 0;
+              myGamePiece.speedY = 0;
+              myGamePiece.gravitySpeed = 0;
               myGamePiece2.x = 400;
               myGamePiece2.y =200;
+              myGamePiece2.speedX = 0;
+              myGamePiece2.speedY = 0;
+              myGamePiece2.gravitySpeed = 0;
             }
         }
 
@@ -157,12 +227,17 @@ function textcomponent(width, height, color, x, y, type) {
 function updateGameArea() {
 
     myGameArea.clear();
+
+
+
     nat.update();
     leftwall.update();
     rightwall.update();
     topwall.update();
     myGamePiece.update();
+    myGamePiece.newPos();
     myGamePiece2.update();
+    myGamePiece2.newPos();
     score.update();
     score.text = player1score + " : " + player2score;
     ball.update();
@@ -170,13 +245,13 @@ function updateGameArea() {
     if(ball.crashWith(myGamePiece)){
       ball.speedX = myGamePiece.speedX*5;
       ball.gravitySpeed = 0;
-      ball.speedY = myGamePiece.speedY*2;
+      ball.speedY = myGamePiece.speedY/1.5;
     }
     if(ball.crashWith(myGamePiece2)){
       ball.speedX = myGamePiece2.speedX*5;
       ball.gravitySpeed = 0;
 
-      ball.speedY = myGamePiece2.speedY*2;
+      ball.speedY = myGamePiece2.speedY/1.5;
     }
     if(ball.crashWith(leftwall)){
       ball.speedX = -(ball.speedX);
@@ -185,7 +260,7 @@ function updateGameArea() {
       ball.speedX = -(ball.speedX);
     }
     if(ball.crashWith(topwall)){
-      ball.speedX = ball.speedX/3;
+      ball.speedX = ball.speedX;
       ball.speedY = 0;
     }
     if(ball.crashWith(nat)){
@@ -194,9 +269,7 @@ function updateGameArea() {
 
 }
 
-function playerToJump(){
-  //플레이어 점프 시키기 위한 준비
-}
+
 
 //=====================플레이어를 움직이기 위한 코드들
 
@@ -206,37 +279,39 @@ $(function(){
   setInterval(function(){
     // p1
     if(keypress['87']){
-       myGamePiece.speedY = -3;
-       myGamePiece.y += myGamePiece.speedY;
-     }// up - w
+       myGamePiece.speedY = -10;
+
+     }// jump - w
     if(keypress['83']){
       myGamePiece.speedY = +3;
-      myGamePiece.y += myGamePiece.speedY;
+
     } // down - s
     if(keypress['65']){
       myGamePiece.speedX = -3;
-      myGamePiece.x += myGamePiece.speedX;
+
+
     } // left - a
     if(keypress['68']){
       myGamePiece.speedX = +3;
-      myGamePiece.x += myGamePiece.speedX;
+
+
     } // right - d
     // p2
     if(keypress['73']){
-      myGamePiece2.speedY = -3;
-      myGamePiece2.y += myGamePiece2.speedY;
-    }  // up - i
+      myGamePiece2.speedY = -10;
+
+    }  // jump - i
     if(keypress['75']){
       myGamePiece2.speedY = +3;
-      myGamePiece2.y += myGamePiece2.speedY;
+
     }  // down - k
     if(keypress['74']){
       myGamePiece2.speedX = -3;
-      myGamePiece2.x += myGamePiece2.speedX;
+
     }  // left - j
     if(keypress['76']){
       myGamePiece2.speedX = +3;
-      myGamePiece2.x += myGamePiece2.speedX;
+
     }  // right - l
   }, 10);
 
@@ -259,8 +334,9 @@ $(function(){
 </div>
 
 <p>왼쪽은 wasd로 오른쪽은 ikjl으로 움직입니다.</p>
+<p>각각 w와 i는 점프입니다.</p>
 <p>공이 닿는 순간의 속력으로 공을 밀어냅니다.</p>
 <p>상대방 발밑에 공을 떨어트리면 점수를 획득합니다.</p>
-<p>tip)천장에 공이 닿으면 공의 속력이 줄어듭니다.</p>
+<p></p>
 </body>
 </html>
