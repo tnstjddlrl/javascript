@@ -5,12 +5,12 @@
 <style>
 canvas {
     border:1px solid #d3d3d3;
-    background-color: #f1f1f1;
+    background-color: #cce5ff;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
-<body onload="startGame()">
+<body onload="startVolleyGame()">
 <script>
 
 var myGamePiece;
@@ -20,15 +20,15 @@ var ball;
 var score;
 var player1score =0, player2score=0;
 
-function startGame() {
+function startVolleyGame() {
 
 
-    nat = new component(5,130, "green",240,150);
-    topwall = new component(480,5,"green",0,0);
-    leftwall = new component(5,300, "green",0,0);
-    rightwall = new component(5,300, "green",475,0);
-    myGamePiece2 = new component(50, 50, "green", 400, 200);
-    myGamePiece = new component(50, 50, "red", 10, 200);
+    nat = new component(5,160, "green",400,450);
+    topwall = new component(800,5,"green",0,0);
+    leftwall = new component(5,800, "green",0,0);
+    rightwall = new component(5,800, "green",795,0);
+    myGamePiece2 = new component(50, 150, "green", 400, 200);
+    myGamePiece = new component(50, 150, "red", 10, 200);
     ball = new gravitycomponent(30, 30, "blue", 100, 50);
     score = new textcomponent("30px", "Consolas", "black", 280, 40, "text");
 
@@ -38,8 +38,8 @@ function startGame() {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 480;
-        this.canvas.height = 270;
+        this.canvas.width = 800;
+        this.canvas.height = 600;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.interval = setInterval(updateGameArea, 20);
@@ -234,10 +234,10 @@ function updateGameArea() {
       ball.speedY = myGamePiece2.speedY/1.5;}
     }
     if(ball.crashWith(leftwall)){
-      ball.speedX = -(ball.speedX);
+      ball.speedX = -(ball.speedX)/1.3;
     }
     if(ball.crashWith(rightwall)){
-      ball.speedX = -(ball.speedX);
+      ball.speedX = -(ball.speedX)/1.3;
     }
     if(ball.crashWith(topwall)){
       ball.speedX = ball.speedX;
@@ -253,6 +253,9 @@ function updateGameArea() {
 
 //=====================플레이어를 움직이기 위한 코드들
 
+$(myGamePiece).mousedown(function(){
+  $(this).color = "blue";
+})
 
 $(function(){
   var keypress = {};
@@ -268,13 +271,16 @@ $(function(){
 
     } // down - s
     if(keypress['65']){
+      if(myGamePiece.x > 1){
       myGamePiece.speedX = -3;
       myGamePiece.x += myGamePiece.speedX;
-
+    }
     } // left - a
     if(keypress['68']){
-      myGamePiece.speedX = +3;
+      if(myGamePiece.x < 400){
+        myGamePiece.speedX = +3;
       myGamePiece.x += myGamePiece.speedX;
+    }
     } // right - d
 
     // p2
@@ -287,14 +293,16 @@ $(function(){
 
     }  // down - k
     if(keypress['74']){
+      if(myGamePiece2.x > 400){
       myGamePiece2.speedX = -3;
       myGamePiece2.x += myGamePiece2.speedX;
-
+    }
     }  // left - j
     if(keypress['76']){
+      if(myGamePiece2.x < 800){
       myGamePiece2.speedX = +3;
       myGamePiece2.x += myGamePiece2.speedX;
-
+    }
     }  // right - l
   }, 10);
 
