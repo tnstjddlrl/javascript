@@ -21,6 +21,7 @@ var ball;
 var score;
 var player1score =0, player2score=0;
 
+
 function startVolleyGame() {
 
 
@@ -31,7 +32,8 @@ function startVolleyGame() {
     myGamePiece2 = new component(50, 150, "green", 700, 500);
     myGamePiece = new component(50, 150, "red", 10, 500);
     ball = new gravitycomponent(30, 30, "blue", 10, 50);
-    score = new textcomponent("30px", "Consolas", "black", 280, 40, "text");
+    score = new textcomponent("30px", "Consolas", "black", 400, 40, "text"); //필요한 객체들을 생성
+
 
     myGameArea.start();
 }
@@ -44,14 +46,14 @@ var myGameArea = {
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 20);
+        this.interval = setInterval(updateGameArea, 20); //캔버스 설정.
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
 
-function component(width, height, color, x, y) {
+function component(width, height, color, x, y) { //기본물체생성 함수
     this.width = width;
     this.height = height;
     this.speedX = 0;
@@ -60,20 +62,20 @@ function component(width, height, color, x, y) {
     this.gravitySpeed = 0;
     this.x = x;
     this.y = y;
-    this.update = function() {
+    this.update = function() { //위치갱신.
         ctx = myGameArea.context;
         ctx.fillStyle = color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 
-    this.newPos = function() {
+    this.newPos = function() { //움직임 갱신.
         this.x += this.speedX;
         this.gravitySpeed += this.gravity;
         this.y += this.speedY + this.gravitySpeed;
         this.hitBottom();
 
     }
-    this.hitBottom = function() {
+    this.hitBottom = function() { //바닥과 부딪혔을때
         var rockbottom = myGameArea.canvas.height - this.height;
 
         if (this.y > rockbottom) {
@@ -86,7 +88,7 @@ function component(width, height, color, x, y) {
         }
 
       }
-      this.crashWith = function(otherobj) {
+      this.crashWith = function(otherobj) { //물체와 물체가 부딪혔을때
       var myleft = this.x;
       var myright = this.x + (this.width);
       var mytop = this.y;
@@ -104,7 +106,7 @@ function component(width, height, color, x, y) {
 
 
 }
-function gravitycomponent(width, height, color, x, y, type) {
+function gravitycomponent(width, height, color, x, y, type) { //공생성시 필요한 함수.
     this.type = type;
     this.width = width;
     this.height = height;
@@ -169,7 +171,7 @@ function gravitycomponent(width, height, color, x, y, type) {
               myGamePiece2.speedY = 0;
               myGamePiece2.gravitySpeed = 0;
             }
-        }
+        } //공은 바닥과 부딪혔을때 점수가 매겨져야 하기 때문에 점수를 카운트하고 공의위치와 플레이어의 위치를 초기화시킴.
 
         this.crashWith = function(otherobj) {
         var myleft = this.x;
@@ -189,7 +191,7 @@ function gravitycomponent(width, height, color, x, y, type) {
 }
 
 }
-function textcomponent(width, height, color, x, y, type) {
+function textcomponent(width, height, color, x, y, type) { //점수판 생성 함수.
     this.type = type;
     this.width = width;
     this.height = height;
@@ -210,7 +212,7 @@ function textcomponent(width, height, color, x, y, type) {
     }
 }
 
-function obstaComponent(width, height, color, x, y, type) {
+function obstaComponent(width, height, color, x, y, type) { //움직이는 장애물 생성 함수.
     this.type = type;
     this.width = width;
     this.height = height;
@@ -251,18 +253,24 @@ function obstaComponent(width, height, color, x, y, type) {
 }
 
 function updateGameArea() {
-  var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+  var x, height, minHeight, maxHeight;
       for (i = 0; i < myObstacles.length; i += 1) {
 
           if (ball.crashWith(myObstacles[i])) {
             if(ball.speedX>0){
               ball.speedX = -13;
+              ball.speedY = -(Math.floor(Math.random() * 20));
+              console.log(ball.speedY);
             } else {
               ball.speedX = 13;
+              ball.speedY = -(Math.floor(Math.random() * 20));
+              console.log(ball.speedY);
             }
+
           }
           if(leftwall.crashWith(myObstacles[i])){
             myObstacles[i].speedX = 5;
+
           }
 
       }
@@ -272,17 +280,15 @@ function updateGameArea() {
           x = myGameArea.canvas.width;
           minHeight = 300;
           maxHeight = 450;
-          height = Math.floor(Math.random(4)*(maxHeight-minHeight+1)+minHeight);
-          minGap = 100;
-          maxGap = 1000;
-          gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
-          myObstacles.push(new obstaComponent(10, height, "green", x, 0));
-          // myObstacles.push(new obstaComponent(10, x - height - gap, "green", x, height + gap));
+          height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+
+          myObstacles.push(new obstaComponent(5, height, "green", x, 0));
       }
       for (i = 0; i < myObstacles.length; i += 1) {
           myObstacles[i].newPos();
           myObstacles[i].update();
       }
+
 
     nat.update();
     leftwall.update();
@@ -295,10 +301,10 @@ function updateGameArea() {
     score.update();
     score.text = player1score + " : " + player2score;
     ball.update();
-    ball.newPos();
+    ball.newPos(); //게임이 실행되면 필요한 함수들.
+
     if(ball.crashWith(myGamePiece)){
       if(myGamePiece.speedY == 0){
-          console.log('확인');
       ball.speedY = -5;
       ball.gravitySpeed = 0;
       ball.speedX = myGamePiece.speedX*5;
@@ -310,7 +316,6 @@ function updateGameArea() {
     }
     if(ball.crashWith(myGamePiece2)){
       if(myGamePiece2.speedY == 0){
-          console.log('확인');
       ball.speedY = -5;
       ball.gravitySpeed = 0;
       ball.speedX = myGamePiece2.speedX*5;
@@ -337,7 +342,6 @@ function updateGameArea() {
         ball.speedX = 8;
       }
 
-      // ball.speedX = -(ball.speedX);
     }
 
 }
